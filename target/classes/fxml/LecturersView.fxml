@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.studentmanagement.controller.LecturersViewController"
+      spacing="10">
+    
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Lecturers Management" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Add New Lecturer" onAction="#handleNewLecturer" 
+                style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+    </HBox>
+
+    <GridPane vgap="10" hgap="10">
+        <Label text="Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        
+        <Label text="Email:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="emailField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        
+        <Label text="Courses:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <ListView fx:id="coursesListView" GridPane.rowIndex="2" GridPane.columnIndex="1" 
+                 prefHeight="100" prefWidth="200"/>
+    </GridPane>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Search:" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="searchField" HBox.hgrow="ALWAYS" promptText="Search by name, email, or courses..."/>
+    </HBox>
+
+    <TableView fx:id="lecturerTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="100"/>
+            <TableColumn fx:id="nameColumn" text="Name" prefWidth="200"/>
+            <TableColumn fx:id="emailColumn" text="Email" prefWidth="200"/>
+            <TableColumn fx:id="coursesColumn" text="Courses Teaching" prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Save" onAction="#handleSaveLecturer" 
+                style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+        <Button text="Edit" onAction="#handleEditLecturer" 
+                style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+        <Button text="Delete" onAction="#handleDeleteLecturer" 
+                style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+    </HBox>
+</VBox>

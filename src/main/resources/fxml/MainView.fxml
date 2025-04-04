@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.studentmanagement.controller.MainViewController"
+      spacing="0">
+    
+    <MenuBar>
+        <Menu text="File">
+            <MenuItem text="Exit" onAction="#handleExit"/>
+        </Menu>
+        <Menu text="Help">
+            <MenuItem text="About" onAction="#handleAbout"/>
+        </Menu>
+    </MenuBar>
+
+    <HBox spacing="0" VBox.vgrow="ALWAYS">
+        <!-- Sidebar -->
+        <VBox style="-fx-background-color: #2c3e50;" minWidth="200" maxWidth="200">
+            <padding><Insets top="20" right="10" bottom="10" left="10"/></padding>
+            <spacing>10</spacing>
+            
+            <Label text="Student Management" 
+                   style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+            
+            <Separator style="-fx-background-color: #34495e;"/>
+            
+            <Button fx:id="studentsButton" text="Students" 
+                    style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-size: 14px;"
+                    onAction="#handleStudentsView"/>
+            
+            <Button fx:id="lecturersButton" text="Lecturers"
+                    style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-size: 14px;"
+                    onAction="#handleLecturersView"/>
+            
+            <Button fx:id="coursesButton" text="Courses"
+                    style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-size: 14px;"
+                    onAction="#handleCoursesView"/>
+            
+            <Button fx:id="programmesButton" text="Programmes"
+                    style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-font-size: 14px;"
+                    onAction="#handleProgrammesView"/>
+            
+            <Region VBox.vgrow="ALWAYS"/>
+            
+            <Label text="Student Management System" 
+                   style="-fx-text-fill: white; -fx-font-size: 12px;"/>
+        </VBox>
+
+        <!-- Main Content Area -->
+        <StackPane fx:id="mainContent" HBox.hgrow="ALWAYS" style="-fx-background-color: #ecf0f1;">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+            
+            <!-- Welcome View -->
+            <VBox fx:id="welcomeView" alignment="CENTER" spacing="20">
+                <Label text="Welcome to Student Management System" 
+                       style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <Label text="Select an option from the sidebar to begin" 
+                       style="-fx-font-size: 16px;"/>
+            </VBox>
+        </StackPane>
+    </HBox>
+</VBox> 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.studentmanagement.controller.ProgrammesViewController"
+      spacing="10">
+    
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Programmes Management" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Add New Programme" onAction="#handleNewProgramme" 
+                style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Search:" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="searchField" HBox.hgrow="ALWAYS" promptText="Search by code, name, or department..."/>
+    </HBox>
+
+    <TableView fx:id="programmesTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="codeColumn" text="Code" prefWidth="100"/>
+            <TableColumn fx:id="nameColumn" text="Name" prefWidth="200"/>
+            <TableColumn fx:id="departmentColumn" text="Department" prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Edit" onAction="#handleEditProgramme" 
+                style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+        <Button text="Delete" onAction="#handleDeleteProgramme" 
+                style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+    </HBox>
+</VBox> 
