@@ -11,7 +11,7 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public Student save(Student student) throws Exception {
         String sqlPerson = "INSERT INTO persons (name, email, type) VALUES (?, ?, 'STUDENT')";
-        String sqlStudent = "INSERT INTO students (person_id, programme_id) VALUES (?, ?)";
+        String sqlStudent = "INSERT INTO students (person_id, programme_code) VALUES (?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             // Start transaction
@@ -60,7 +60,7 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public Student update(Student student) throws Exception {
         String sqlPerson = "UPDATE persons SET name = ?, email = ? WHERE id = ?";
-        String sqlStudent = "UPDATE students SET programme_id = ? WHERE person_id = ?";
+        String sqlStudent = "UPDATE students SET programme_code = ? WHERE person_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             // Start transaction
@@ -130,10 +130,10 @@ public class StudentDAOImpl implements StudentDAO {
 
     @Override
     public Student findById(Integer id) throws Exception {
-        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.programme_id " +
+        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.code as programme_code " +
                     "FROM students s " +
                     "JOIN persons p ON s.person_id = p.id " +
-                    "LEFT JOIN Programme pr ON s.programme_id = pr.programme_id " +
+                    "LEFT JOIN programmes pr ON s.programme_code = pr.code " +
                     "WHERE s.person_id = ?";
                     
         try (Connection conn = DatabaseConnection.getConnection();
@@ -147,7 +147,7 @@ public class StudentDAOImpl implements StudentDAO {
                         rs.getInt("person_id"),
                         rs.getString("name"),
                         rs.getString("email"),
-                        rs.getString("programme_id"),
+                        rs.getString("programme_code"),
                         rs.getString("programme_name")
                     );
                 }
@@ -159,10 +159,10 @@ public class StudentDAOImpl implements StudentDAO {
     @Override
     public List<Student> findAll() throws Exception {
         List<Student> students = new ArrayList<>();
-        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.programme_id " +
+        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.code as programme_code " +
                     "FROM students s " +
                     "JOIN persons p ON s.person_id = p.id " +
-                    "LEFT JOIN Programme pr ON s.programme_id = pr.programme_id";
+                    "LEFT JOIN programmes pr ON s.programme_code = pr.code";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -173,7 +173,7 @@ public class StudentDAOImpl implements StudentDAO {
                     rs.getInt("person_id"),
                     rs.getString("name"),
                     rs.getString("email"),
-                    rs.getString("programme_id"),
+                    rs.getString("programme_code"),
                     rs.getString("programme_name")
                 ));
             }

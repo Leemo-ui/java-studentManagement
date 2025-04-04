@@ -10,17 +10,15 @@ public class ProgrammeDAOImpl implements ProgrammeDAO {
 
     @Override
     public Programme save(Programme programme) throws Exception {
-        String sql = "INSERT INTO Programme (programme_id, name) VALUES (?, ?)";
+        String sql = "INSERT INTO programmes (code, name, department) VALUES (?, ?, ?)";
+        
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, programme.getCode());
             pstmt.setString(2, programme.getName());
-            
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("Creating programme failed, no rows affected.");
-            }
+            pstmt.setString(3, programme.getDepartment());
+            pstmt.executeUpdate();
             
             return programme;
         }
@@ -28,17 +26,15 @@ public class ProgrammeDAOImpl implements ProgrammeDAO {
 
     @Override
     public Programme update(Programme programme) throws Exception {
-        String sql = "UPDATE Programme SET name = ? WHERE programme_id = ?";
+        String sql = "UPDATE programmes SET name = ?, department = ? WHERE code = ?";
+        
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, programme.getName());
-            pstmt.setString(2, programme.getCode());
-            
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("Updating programme failed, no rows affected.");
-            }
+            pstmt.setString(2, programme.getDepartment());
+            pstmt.setString(3, programme.getCode());
+            pstmt.executeUpdate();
             
             return programme;
         }
@@ -46,22 +42,20 @@ public class ProgrammeDAOImpl implements ProgrammeDAO {
 
     @Override
     public void delete(String code) throws Exception {
-        String sql = "DELETE FROM Programme WHERE programme_id = ?";
+        String sql = "DELETE FROM programmes WHERE code = ?";
+        
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, code);
-            
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("Deleting programme failed, no rows affected.");
-            }
+            pstmt.executeUpdate();
         }
     }
 
     @Override
     public Programme findById(String code) throws Exception {
-        String sql = "SELECT * FROM Programme WHERE programme_id = ?";
+        String sql = "SELECT * FROM programmes WHERE code = ?";
+        
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -70,9 +64,9 @@ public class ProgrammeDAOImpl implements ProgrammeDAO {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return new Programme(
-                        rs.getString("programme_id"),
+                        rs.getString("code"),
                         rs.getString("name"),
-                        "Department" // Default value since department is not in the Programme table
+                        rs.getString("department")
                     );
                 }
             }
@@ -83,7 +77,7 @@ public class ProgrammeDAOImpl implements ProgrammeDAO {
     @Override
     public List<Programme> findAll() throws Exception {
         List<Programme> programmes = new ArrayList<>();
-        String sql = "SELECT * FROM Programme";
+        String sql = "SELECT * FROM programmes";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -91,9 +85,9 @@ public class ProgrammeDAOImpl implements ProgrammeDAO {
             
             while (rs.next()) {
                 programmes.add(new Programme(
-                    rs.getString("programme_id"),
+                    rs.getString("code"),
                     rs.getString("name"),
-                    "Department" // Default value since department is not in the Programme table
+                    rs.getString("department")
                 ));
             }
         }

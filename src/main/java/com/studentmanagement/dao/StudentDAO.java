@@ -11,7 +11,7 @@ public interface StudentDAO extends FileBasedDAO<Student, Integer> {
     
     public static int addStudent(String name, String email, String programmeCode) throws SQLException {
         String sqlPerson = "INSERT INTO persons (name, email, type) VALUES (?, ?, 'STUDENT')";
-        String sqlStudent = "INSERT INTO students (person_id, programme_id) VALUES (?, ?)";
+        String sqlStudent = "INSERT INTO students (person_id, programme_code) VALUES (?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             // Start transaction
@@ -48,14 +48,15 @@ public interface StudentDAO extends FileBasedDAO<Student, Integer> {
                 conn.rollback();
                 throw e;
             } finally {
+                // Reset auto-commit
                 conn.setAutoCommit(true);
             }
         }
     }
     
-    public static void updateStudent(Student student) throws SQLException {
+    public static void updateStudent(int id, String name, String email, String programmeCode) throws SQLException {
         String sqlPerson = "UPDATE persons SET name = ?, email = ? WHERE id = ?";
-        String sqlStudent = "UPDATE students SET programme_id = ? WHERE person_id = ?";
+        String sqlStudent = "UPDATE students SET programme_code = ? WHERE person_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection()) {
             // Start transaction
@@ -64,15 +65,15 @@ public interface StudentDAO extends FileBasedDAO<Student, Integer> {
             try {
                 // Update Person table
                 PreparedStatement stmtPerson = conn.prepareStatement(sqlPerson);
-                stmtPerson.setString(1, student.getName());
-                stmtPerson.setString(2, student.getEmail());
-                stmtPerson.setInt(3, student.getId());
+                stmtPerson.setString(1, name);
+                stmtPerson.setString(2, email);
+                stmtPerson.setInt(3, id);
                 stmtPerson.executeUpdate();
                 
                 // Update Student table
                 PreparedStatement stmtStudent = conn.prepareStatement(sqlStudent);
-                stmtStudent.setString(1, student.getProgrammeCode());
-                stmtStudent.setInt(2, student.getId());
+                stmtStudent.setString(1, programmeCode);
+                stmtStudent.setInt(2, id);
                 stmtStudent.executeUpdate();
                 
                 // Commit transaction
@@ -82,6 +83,7 @@ public interface StudentDAO extends FileBasedDAO<Student, Integer> {
                 conn.rollback();
                 throw e;
             } finally {
+                // Reset auto-commit
                 conn.setAutoCommit(true);
             }
         }
@@ -121,38 +123,38 @@ public interface StudentDAO extends FileBasedDAO<Student, Integer> {
     }
     
     public static Student getStudent(int id) throws SQLException {
-        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.programme_id " +
+        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.code as programme_code " +
                     "FROM students s " +
                     "JOIN persons p ON s.person_id = p.id " +
-                    "LEFT JOIN Programme pr ON s.programme_id = pr.programme_id " +
+                    "LEFT JOIN programmes pr ON s.programme_code = pr.code " +
                     "WHERE s.person_id = ?";
-        
+                    
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
+            pstmt.setInt(1, id);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return new Student(
                         rs.getInt("person_id"),
                         rs.getString("name"),
                         rs.getString("email"),
-                        rs.getString("programme_id"),
+                        rs.getString("programme_code"),
                         rs.getString("programme_name")
                     );
                 }
-                return null;
             }
         }
+        return null;
     }
     
     public static List<Student> getAllStudents() throws SQLException {
         List<Student> students = new ArrayList<>();
-        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.programme_id " +
+        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.code as programme_code " +
                     "FROM students s " +
                     "JOIN persons p ON s.person_id = p.id " +
-                    "LEFT JOIN Programme pr ON s.programme_id = pr.programme_id " +
-                    "ORDER BY p.name";
+                    "LEFT JOIN programmes pr ON s.programme_code = pr.code";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -163,7 +165,7 @@ public interface StudentDAO extends FileBasedDAO<Student, Integer> {
                     rs.getInt("person_id"),
                     rs.getString("name"),
                     rs.getString("email"),
-                    rs.getString("programme_id"),
+                    rs.getString("programme_code"),
                     rs.getString("programme_name")
                 ));
             }
@@ -173,24 +175,25 @@ public interface StudentDAO extends FileBasedDAO<Student, Integer> {
     
     public static List<Student> getStudentsByProgramme(String programmeCode) throws SQLException {
         List<Student> students = new ArrayList<>();
-        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.programme_id " +
+        String sql = "SELECT s.*, p.name, p.email, pr.name as programme_name, pr.code as programme_code " +
                     "FROM students s " +
                     "JOIN persons p ON s.person_id = p.id " +
-                    "LEFT JOIN Programme pr ON s.programme_id = pr.programme_id " +
-                    "WHERE s.programme_id = ? " +
+                    "LEFT JOIN programmes pr ON s.programme_code = pr.code " +
+                    "WHERE s.programme_code = ? " +
                     "ORDER BY p.name";
         
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            stmt.setString(1, programmeCode);
-            try (ResultSet rs = stmt.executeQuery()) {
+            pstmt.setString(1, programmeCode);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     students.add(new Student(
                         rs.getInt("person_id"),
                         rs.getString("name"),
                         rs.getString("email"),
-                        rs.getString("programme_id"),
+                        rs.getString("programme_code"),
                         rs.getString("programme_name")
                     ));
                 }
