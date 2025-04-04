@@ -70,4 +70,4 @@ studentmanagement_java/
 │           └── fxml/
 ├── pom.xml
 └── database_setup.sql
-``` 
+```
